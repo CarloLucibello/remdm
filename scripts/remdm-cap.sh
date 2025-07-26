@@ -12,12 +12,12 @@
 #SBATCH --open-mode=append            # Do not overwrite logs
 #SBATCH --requeue                     # Requeue upon preemption
 
-checkpoint_path=YOUR-BASE-PATH/remdm/outputs/checkpoints/mdlm.ckpt
+checkpoint_path=../outputs/checkpoints/mdlm.ckpt
 T=0
 sampling_steps=1024
 p=0.9
 eta=0.008
-generated_seqs_path=YOUR-BASE-PATH/remdm/outputs/remdm-cap_T-${sampling_steps}_eta-${eta}_topp-${p}.json
+generated_seqs_path=YOUR-../outputs/remdm-cap_T-${sampling_steps}_eta-${eta}_topp-${p}.json
 
 export HYDRA_FULL_ERROR=1
 

@@ -1,16 +1,4 @@
 #!/bin/bash
-#SBATCH -J mdlm                       # Job name
-#SBATCH -o watch_folder/%x_%j.out     # log file (out & err)
-#SBATCH -N 1                          # Total number of nodes requested
-#SBATCH --get-user-env                # retrieve the users login environment
-#SBATCH --mem=32000                   # server memory requested (per node)
-#SBATCH -t 960:00:00                  # Time limit (hh:mm:ss)
-#SBATCH --partition=gpu               # Request partition
-#SBATCH --constraint="[3090|a5000|a6000|a100]"
-#SBATCH --ntasks-per-node=1
-#SBATCH --gres=gpu:1                  # Type/number of GPUs needed
-#SBATCH --open-mode=append            # Do not overwrite logs
-#SBATCH --requeue                     # Requeue upon preemption
 
 checkpoint_path=../outputs/checkpoints/mdlm.ckpt
 T=0
@@ -20,7 +8,7 @@ generated_seqs_path=../outputs/mdlm_T-${sampling_steps}_topp-${p}.json
 
 export HYDRA_FULL_ERROR=1
 
-srun python -u -m main \
+python -u -m main \
     mode=sample_eval \
     loader.batch_size=1 \
     loader.eval_batch_size=1 \

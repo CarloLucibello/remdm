@@ -1,8 +1,8 @@
 import math
 import typing
 
-import flash_attn
-import flash_attn.layers.rotary
+# import flash_attn
+# import flash_attn.layers.rotary
 import huggingface_hub
 import omegaconf
 import torch
@@ -117,11 +117,12 @@ def rotate_half(x):
 
 
 def apply_rotary_pos_emb(qkv, cos, sin):
-  cos = cos[0, :, 0, 0, : cos.shape[-1] // 2]
-  sin = sin[0, :, 0, 0, : sin.shape[-1] // 2]
-  return flash_attn.layers.rotary.apply_rotary_emb_qkv_(
-    qkv, cos, sin
-  )
+  return (qkv * cos) + (rotate_half(qkv) * sin)
+  # cos = cos[0, :, 0, 0, : cos.shape[-1] // 2]
+  # sin = sin[0, :, 0, 0, : sin.shape[-1] // 2]
+  # return flash_attn.layers.rotary.apply_rotary_emb_qkv_(
+  #   qkv, cos, sin
+  # )
 
 
 #################################################################################
@@ -210,6 +211,9 @@ class DDiTBlock(nn.Module):
       qkv = apply_rotary_pos_emb(
         qkv, cos.to(qkv.dtype), sin.to(qkv.dtype)
       )
+      
+    ## WITH FLASH ATTENTION v2 ## 
+    # TODO provide version without flash-attention
     qkv = rearrange(qkv, 'b s ... -> (b s) ...')
     if seqlens is None:
       cu_seqlens = torch.arange(
@@ -224,8 +228,8 @@ class DDiTBlock(nn.Module):
     x = flash_attn.flash_attn_interface.flash_attn_varlen_qkvpacked_func(
       qkv, cu_seqlens, seq_len, 0.0, causal=self.causal
     )
-
     x = rearrange(x, '(b s) h d -> b s (h d)', b=batch_size)
+    ##################################
 
     scale = torch.ones(1, device=x.device, dtype=x.dtype)
     x = bias_dropout_scale_fn(

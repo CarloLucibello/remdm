@@ -95,11 +95,6 @@ class Diffusion(L.LightningModule):
     if self.config.backbone == 'dit':
       self.backbone = models.dit.DIT(
         self.config, vocab_size=self.vocab_size)
-    elif self.config.backbone == 'dimamba':
-      self.backbone = models.dimamba.DiMamba(
-        self.config,
-        vocab_size=self.vocab_size,
-        pad_token_id=self.tokenizer.pad_token_id)
     elif self.config.backbone == 'ar':
       self.backbone = models.autoregressive.AR(
         self.config,

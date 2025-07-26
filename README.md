@@ -29,10 +29,10 @@ Our main add-ons to MDLM are:
 To get started, create a conda environment containing the required dependencies.
 
 ```bash
-conda env create -f requirements.yaml
+conda env create -f requirements.yml
 conda activate remdm
-# install flash-attention separately
-pip install flash-attn==2.6.3
+## install flash-attention separately
+# pip install flash-attn==2.6.3
 ```
 
 Create the following directories to store saved models and slurm logs:
@@ -41,8 +41,17 @@ mkdir outputs
 mkdir watch_folder
 ```
 
+## Checkpoints
 Download checkpoints from this [Google Drive folder](https://drive.google.com/drive/folders/16LuuptK7Xfk-vzhQYZBZ0SA-B-BFluau?usp=sharing) released by the MDLM repo and put them under
-the following directory `./outputs/checkpoints`
+the following directory `./outputs/checkpoints`.
+
+You can automatize this using the `gdown` tool as follows:
+```
+cd output/checkpoints
+gdown 1Ul68afQtLMKa-9fd80cCtwabFJlxizGe # MDLM
+gdown 1VMOpXfIg2bKede2N7Ot06jOcvSZuBBEl # AR
+gdown 1s_9Yu_kGbjzTN3dyz1yyTcg9ulJgyv5l # SEDD
+```
 
 ## Reproducing Experiments
 
