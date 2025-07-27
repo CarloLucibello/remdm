@@ -9,6 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
+from torch.utils.checkpoint import checkpoint
 
 # Flags required to enable jit fusion kernels
 torch._C._jit_set_profiling_mode(False)
@@ -375,9 +376,13 @@ class DIT(nn.Module, huggingface_hub.PyTorchModelHubMixin):
 
     rotary_cos_sin = self.rotary_emb(x)
 
-    with torch.cuda.amp.autocast(dtype=torch.bfloat16):
+    device = next(self.parameters()).device
+    supports_bf16 = torch.cuda.get_device_capability(device)[0] >= 8
+    float_t = torch.bfloat16 if supports_bf16 else torch.float16
+    with torch.autocast(device_type=device.type, dtype=float_t):
       for i in range(len(self.blocks)):
-        x = self.blocks[i](x, rotary_cos_sin, c, seqlens=None)
+        # x = self.blocks[i](x, rotary_cos_sin, c, seqlens=None)
+        x = checkpoint(self.blocks[i], x, rotary_cos_sin, c, seqlens=None, use_reentrant=False)
       x = self.output_layer(x, c)
 
     return x

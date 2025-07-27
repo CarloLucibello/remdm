@@ -145,7 +145,7 @@ class Diffusion(L.LightningModule):
     self.lr = self.config.optim.lr
     self.sampling_eps = self.config.training.sampling_eps
     self.time_conditioning = self.config.time_conditioning
-    self.neg_infinity = -1000000.0
+    self.neg_infinity = -65000.0  # Safe value for fp16 (-65504 is the limit)
     self.fast_forward_epochs = None
     self.fast_forward_batches = None
     self._validate_configuration()
@@ -856,7 +856,10 @@ class Diffusion(L.LightningModule):
     p_x0_cache = None
 
     min_t = timesteps[-1].item()
-    confident_score = - torch.ones_like(x, device=self.device).to(torch.bfloat16) * torch.inf
+
+    supports_bf16 = torch.cuda.get_device_capability(self.device)[0] >= 8
+    float_t = torch.bfloat16 if supports_bf16 else torch.float16
+    confident_score = - torch.ones_like(x, device=self.device).to(float_t) * torch.inf
     if self.config.sampling.dfm:
       timestep = 1
       while timestep > dt:
