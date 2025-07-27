@@ -131,7 +131,7 @@ class LayerNorm(nn.Module):
     self.weight = nn.Parameter(torch.ones([dim]))
     self.dim = dim
   def forward(self, x):
-    with torch.cuda.amp.autocast(enabled=False):
+    with torch.amp.autocast(device_type=x.device.type, enabled=False):
       x = F.layer_norm(x.float(), [self.dim])
     return x * self.weight[None,None,:]
 
@@ -260,7 +260,7 @@ class DDiTBlock(nn.Module):
                     'b s (three h d) -> b s three h d',
                     three=3,
                     h=self.n_heads)
-    with torch.cuda.amp.autocast(enabled=False):
+    with torch.amp.autocast(device_type=qkv.device.type, enabled=False):
       cos, sin = rotary_cos_sin
       qkv = apply_rotary_pos_emb(
         qkv, cos.to(qkv.dtype), sin.to(qkv.dtype))
@@ -379,7 +379,7 @@ class DIT(nn.Module, huggingface_hub.PyTorchModelHubMixin):
     device = next(self.parameters()).device
     supports_bf16 = torch.cuda.get_device_capability(device)[0] >= 8
     float_t = torch.bfloat16 if supports_bf16 else torch.float16
-    with torch.autocast(device_type=device.type, dtype=float_t):
+    with torch.amp.autocast(device_type=device.type, dtype=float_t):
       for i in range(len(self.blocks)):
         # x = self.blocks[i](x, rotary_cos_sin, c, seqlens=None)
         x = checkpoint(self.blocks[i], x, rotary_cos_sin, c, seqlens=None, use_reentrant=False)
