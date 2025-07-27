@@ -211,9 +211,7 @@ def main(config):
     samples, gen_ppl, entropies = generate_samples(config, logger, tokenizer)
     # compute MAUVE score
     human_references = []
-    print("HERE A")
     _, valid_loader = dataloader.get_dataloaders(config, tokenizer, valid_seed=config.seed, skip_train=True)
-    print("HERE B")
     for _ in range(config.sampling.num_sample_batches):    
         batch = next(iter(valid_loader))
         input_ids = batch['input_ids']
