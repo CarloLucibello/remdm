@@ -323,15 +323,17 @@ def get_dataset(
     dataset = datasets.load_dataset(
       'wikitext',
       name='wikitext-103-raw-v1',
+      trust_remote_code=True,
       cache_dir=cache_dir)
   elif dataset_name == 'wikitext2':
     dataset = datasets.load_dataset(
       'wikitext',
       name='wikitext-2-raw-v1',
+      trust_remote_code=True,
       cache_dir=cache_dir)
   elif dataset_name == 'ptb':
     dataset = datasets.load_dataset(
-      'ptb_text_only', cache_dir=cache_dir)
+      'ptb_text_only', trust_remote_code=True, cache_dir=cache_dir)
   elif dataset_name == 'lambada':
     dataset = get_lambada_test_dataset()
   elif dataset_name == 'text8':
@@ -346,11 +348,13 @@ def get_dataset(
       'openwebtext',
       split='train[:-100000]',
       cache_dir=cache_dir,
+      trust_remote_code=True,
       streaming=streaming)
   elif dataset_name == 'openwebtext-valid':
     dataset = datasets.load_dataset(
       'openwebtext',
       split='train[-100000:]',
+      trust_remote_code=True,
       cache_dir=cache_dir,
       streaming=streaming)
   elif dataset_name == 'scientific_papers_arxiv':
@@ -368,6 +372,7 @@ def get_dataset(
   elif dataset_name == 'ag_news':
     dataset = datasets.load_dataset(
       'ag_news',
+      trust_remote_code=True,
       cache_dir=cache_dir,
       streaming=streaming)
   else:

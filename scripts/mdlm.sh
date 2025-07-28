@@ -52,6 +52,8 @@ generated_seqs_path=$HOME/Git/remdm/outputs/mdlm_T-${sampling_steps}_topp-${p}_n
 
 export HYDRA_FULL_ERROR=1
 
+# hydra.run.dir="${PWD}/outputs/mdlm" \
+
 srun python -u -m main \
     mode=sample_eval \
     data=openwebtext-split \
