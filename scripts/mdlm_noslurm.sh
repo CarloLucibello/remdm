@@ -11,6 +11,7 @@ num_sample_batches=5 # 5000
 global_batch_size=512 # useless, since we set loader.batch_size=1 and loader.eval_batch_size=1
 batch_size=1        # if I try to increase this, I get OOM
 generated_seqs_path=$HOME/Git/remdm/outputs/mdlm_T-${sampling_steps}_topp-${p}_n-${num_sample_batches}.json
+devices=1
 
 export HYDRA_FULL_ERROR=1
 
@@ -36,7 +37,8 @@ python -u -m main \
     sampling.num_sample_batches=${num_sample_batches} \
     sampling.generated_seqs_path=${generated_seqs_path} \
     sampling.nucleus_p=${p} \
-    sampling.sampler="mdlm"
+    sampling.sampler="mdlm" \
+    trainer.devices=${devices}
 
 
 end_time=$(date +%s)
