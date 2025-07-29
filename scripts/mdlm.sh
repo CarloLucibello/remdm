@@ -39,13 +39,12 @@ conda activate remdm
 
 start_time=$(date +%s)
 
-
 SEED=1
 checkpoint_path=$HOME/Git/remdm/outputs/checkpoints/mdlm.ckpt
 T=0
 sampling_steps=128 #1024
 p=0.9
-num_sample_batches=500 # 5000
+num_sample_batches=5 # 5000
 global_batch_size=512 # useless, since we set loader.batch_size=1 and loader.eval_batch_size=1
 batch_size=1        # if I try to increase this, I get OOM
 generated_seqs_path=$HOME/Git/remdm/outputs/mdlm_T-${sampling_steps}_topp-${p}_n-${num_sample_batches}.json
